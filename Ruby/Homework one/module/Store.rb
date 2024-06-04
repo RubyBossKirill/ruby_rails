@@ -4,6 +4,7 @@ class Store
     JSON_DATA = '../lib/books.json'
 
     def initialize()
+        @books = load_items_from_json
     end
 
     def load_items_from_json
@@ -21,12 +22,13 @@ class Store
             file.write(read.to_json) 
         end
     end
+
+    def display_items
+        numb = 0
+        @books['items'].each {|item| p "#{numb += 1}. #{item['type']} - #{item['title']} - #{item['price']}"} 
+    end
 end
 
 
 magaz = Store.new()
-p magaz
-label = magaz.load_items_from_json
-p label['items'][1]['title']
-data = {"type": "sadasdaf", "title": "Леон", "year": 1994, "director": "Люк Бессон", "price": 990, "quantity": 5}
-magaz.save_items_to_json(data)
+magaz.display_items
