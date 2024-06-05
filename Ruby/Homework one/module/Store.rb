@@ -1,12 +1,22 @@
 require 'json'
 
 class Store
-    JSON_DATA = '../lib/books.json'
+    JSON_DATA = 'lib/books.json'
 
     def initialize()
         @books = load_items_from_json
     end
 
+    def display_items
+        numb = 0
+        @books['items'].each {|item| p "#{numb += 1}. #{item['type']} - #{item['title']} - #{item['price']}"} 
+    end
+
+    def quantity_items
+        @books['items'].count
+    end
+
+    private
     def load_items_from_json
         file = File.read(JSON_DATA)
         data_books = JSON.parse(file)
@@ -22,13 +32,6 @@ class Store
             file.write(read.to_json) 
         end
     end
-
-    def display_items
-        numb = 0
-        @books['items'].each {|item| p "#{numb += 1}. #{item['type']} - #{item['title']} - #{item['price']}"} 
-    end
 end
 
 
-magaz = Store.new()
-magaz.display_items
