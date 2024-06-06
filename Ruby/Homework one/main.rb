@@ -1,5 +1,6 @@
 require_relative 'module/Store'
 require_relative 'module/Customer'
+require_relative 'module/Admin'
 
 $store = Store.new()
 $basket = Customer.new($store)
@@ -34,7 +35,31 @@ loop do
     when 4
         $basket.view_final_price
     when 5
-        asdasd
+        loop do
+            puts "Административные функции:\n1. Добавить новый товар\n2. Вернуться назад\nВведите номер действия:"
+            choice = gets.chomp.to_i
+            case choice
+            when 1
+                puts "Введите тип товара:"
+                choice_type = gets.chomp.to_s
+                puts "Введите название товара:"
+                choice_title = gets.chomp.to_s
+                puts "Введите год выпуска:"
+                choice_year = gets.chomp.to_i
+                puts "Кто создатель товара?"
+                choice_director = gets.chomp.to_s
+                puts "Какая цена за товар"
+                choice_price = gets.chomp.to_i
+                puts "Количество данного товара"
+                choice_quantity = gets.chomp.to_i
+                admin_store = Admin.new()
+                admin_store.add_item(choice_type, choice_title, choice_year, choice_director, choice_price, choice_quantity, $store)
+            when 2
+                break
+            else
+                break
+            end
+        end
     when 6
         "До свидания!"
         break

@@ -20,6 +20,12 @@ class Store
         @books['items'][index]
     end
 
+    def admin_item_add(hash)
+        @books['items']
+        @books['items'] << hash
+        save_items_to_json(@books)
+    end
+
     private
     def load_items_from_json
         file = File.read(JSON_DATA)
@@ -29,11 +35,10 @@ class Store
     def save_items_to_json(data)
         file = File.read(JSON_DATA)
         read = JSON.parse(file)
-        base = read['items']
-        base << data  
-        read['items'] = base
+        base = read
+        base['items'] = data['items']
         File.open(JSON_DATA, 'w') do |file|
-            file.write(read.to_json) 
+            file.write(base.to_json) 
         end
     end
 end
