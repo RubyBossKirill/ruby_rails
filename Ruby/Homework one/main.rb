@@ -32,7 +32,7 @@ loop do
     when 3
         $basket.view_cart
     when 4
-        adad
+        $basket.view_final_price
     when 5
         asdasd
     when 6
