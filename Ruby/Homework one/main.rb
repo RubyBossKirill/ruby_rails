@@ -30,7 +30,7 @@ loop do
         end
         $user_basket = $basket.record_basket_user(mass)
     when 3
-        asda
+        $basket.view_cart
     when 4
         adad
     when 5
@@ -42,6 +42,3 @@ loop do
         "Введите нужный номер"
     end
 end
-magaz = Store.new()
-magaz.display_items
-cust = Customer.new(magaz)

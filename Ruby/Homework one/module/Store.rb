@@ -16,6 +16,10 @@ class Store
         @books['items'].count
     end
 
+    def check_index(index)
+        @books['items'][index]
+    end
+
     private
     def load_items_from_json
         file = File.read(JSON_DATA)
