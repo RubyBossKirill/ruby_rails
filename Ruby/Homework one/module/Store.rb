@@ -3,22 +3,23 @@ require 'json'
 class Store
     JSON_DATA = 'lib/books.json'
     attr_accessor :books
+    VARIABLE_HASH = 'items'
 
     def initialize()
         @books = load_items_from_json
     end
 
     def display_items
-        @books['items'].map.with_index(1) { |item, index| puts "#{index}. #{item['type']} - #{item['title']} - #{item['price']}"}
+        @books[VARIABLE_HASH].map.with_index(1) { |item, index| puts "#{index}. #{item['type']} - #{item['title']} - #{item['price']}"}
     end
     
     def quantity_items
-        @books['items'].count
+        @books[VARIABLE_HASH].count
     end
 
     def check_index(index)
         index = index.to_i - 1
-        @books['items'][index]
+        @books[VARIABLE_HASH][index]
     end
     
 
@@ -32,7 +33,7 @@ class Store
         file = File.read(JSON_DATA)
         read = JSON.parse(file)
         base = read
-        base['items'] << data
+        base[VARIABLE_HASH] << data
         File.open(JSON_DATA, 'w') do |file|
             file.write(base.to_json) 
         end
