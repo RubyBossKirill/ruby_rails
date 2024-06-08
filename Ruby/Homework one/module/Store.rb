@@ -17,6 +17,7 @@ class Store
     end
 
     def check_index(index)
+        index = index.to_i - 1
         @books['items'][index]
     end
 
