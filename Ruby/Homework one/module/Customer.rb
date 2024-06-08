@@ -2,7 +2,7 @@ require_relative 'Store'
 
 class Customer
     def initialize(data)
-        @store_list = data
+        p @store_list = data
         @user_basket = nil
     end
 
