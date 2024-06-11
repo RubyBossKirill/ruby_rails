@@ -5,7 +5,7 @@ class Store
     attr_accessor :books
     VARIABLE_HASH = 'items'
 
-    def initialize()
+    def initialize
         @books = load_items_from_json
     end
 
@@ -14,12 +14,7 @@ class Store
     end
     
     def quantity_items
-        @books[VARIABLE_HASH].count
-    end
-
-    def check_index(index)
-        index = index.to_i - 1
-        @books[VARIABLE_HASH][index]
+        @books[VARIABLE_HASH].size
     end
     
 

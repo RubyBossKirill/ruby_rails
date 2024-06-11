@@ -1,6 +1,7 @@
 class Admin < Store
 
     def initialize
+        super
         @admin_item = {
             "type" => nil,
             "title" => nil,
