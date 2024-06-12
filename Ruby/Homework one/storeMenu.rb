@@ -28,6 +28,26 @@ loop do
         if Authentication::UserAuth.valid_email?(email) == false
             break p "Количество попыток исчерпано. Запустите программу заново"
         end
+
+        puts "Придумайте логин"
+        login = gets.chomp.to_s
+
+        puts "Напишите пароль. Минимум 8 символов"
+        password = gets.chomp
+        count = 0
+        while count < 3 do
+            if Authentication::UserAuth.valid_password?(password) == true
+                break
+            else
+                count += 1
+                p "Придумайте другой пароль. Посложнее. Минимум 8 символов"
+                password = gets.chomp
+            end
+        end
+        
+        user = Authentication::UserAuth.new(email, login, password).registered
+
+        puts "Поздравляю с регистрацией."
     when 3
         break puts "До свидания!"
     else

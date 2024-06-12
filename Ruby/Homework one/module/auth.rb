@@ -1,6 +1,6 @@
 module Authentication
     class UserAuth
-        @@USER_DATABASE = '../database/user_accounts.sqlite'
+        @@USER_DATABASE = 'database/user_accounts.sqlite'
 
         def self.valid_email?(email)
             email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -12,7 +12,7 @@ module Authentication
             # Пароль должен содержать как минимум 8 символов, включая хотя бы одну заглавную букву, одну строчную букву и одну цифру.
             password_regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/
             # Проверка совпадения пароля с регулярным выражением
-            password =~ password_regex
+            !!(password =~ password_regex)
         end
 
         def initialize(email, login, password, member = "user")
