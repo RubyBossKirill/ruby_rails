@@ -4,7 +4,7 @@ module Authentication
 
         def self.valid_email?(email)
             email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-            email =~ email_regex
+            !!(email =~ email_regex)
         end
 
         def self.valid_password?(password)
@@ -15,18 +15,20 @@ module Authentication
             password =~ password_regex
         end
 
-        def initialize(email, login, password)
+        def initialize(email, login, password, member = "user")
             @email = email
             @login = login
             @password = password
             @creat_at = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+            @member = member
         end
         def registered
             hash = {
                 "email" => @email.to_s,
                 "login" => @login.to_s,
                 "password" => @password.to_s,
-                "creat_at" => @creat_at
+                "creat_at" => @creat_at,
+                "member" => @member.to_s
             }
             db = SQLite3::Database.open(@@USER_DATABASE)
             db.results_as_hash = true
@@ -37,7 +39,8 @@ module Authentication
                     email TEXT,
                     login TEXT,
                     password TEXT,
-                    creat_at DATETIME
+                    creat_at DATETIME,
+                    member TEXT
                 );
             SQL
 
