@@ -1,6 +1,10 @@
+require 'sqlite3'
+
 module Authentication
     class UserAuth
         @@USER_DATABASE = 'database/user_accounts.sqlite'
+        @@NAME_USER_DATABASE = 'user_accounts'
+        attr_accessor :login
 
         def self.valid_email?(email)
             email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -8,14 +12,11 @@ module Authentication
         end
 
         def self.valid_password?(password)
-            # Регулярное выражение для проверки пароля
-            # Пароль должен содержать как минимум 8 символов, включая хотя бы одну заглавную букву, одну строчную букву и одну цифру.
             password_regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/
-            # Проверка совпадения пароля с регулярным выражением
             !!(password =~ password_regex)
         end
 
-        def initialize(email, login, password, member = "user")
+        def initialize(email, password, login = nil, member = "user")
             @email = email
             @login = login
             @password = password
@@ -30,11 +31,21 @@ module Authentication
                 "creat_at" => @creat_at,
                 "member" => @member.to_s
             }
+            save_to_db(hash)
+        end
+
+        def user_auth
+            result = search_auth_user(@email, @password)
+        end
+
+        private
+
+        def save_to_db(hash)
             db = SQLite3::Database.open(@@USER_DATABASE)
             db.results_as_hash = true
 
             db.execute <<-SQL
-                CREATE TABLE IF NOT EXISTS user_accounts (
+                CREATE TABLE IF NOT EXISTS #{@@NAME_USER_DATABASE} (
                     id INTEGER PRIMARY KEY,
                     email TEXT,
                     login TEXT,
@@ -45,7 +56,7 @@ module Authentication
             SQL
 
             db.execute(
-                "INSERT INTO user_accounts (" +
+                "INSERT INTO #{@@NAME_USER_DATABASE} (" +
                     hash.keys.join(',') + ")" +
                     "VALUES (" +
                     ('?,'*hash.keys.size).chomp(',') +
@@ -54,6 +65,24 @@ module Authentication
             )
 
             db.close
+        end
+
+        def search_auth_user(email, password)
+            db = SQLite3::Database.open(@@USER_DATABASE)
+            db.results_as_hash = true
+
+            db_result = db.execute("SELECT * FROM #{@@NAME_USER_DATABASE} WHERE email = ?", email)
+
+            db.close
+            if !db_result.empty?
+                db_email = db_result[0]['email']
+                db_password = db_result[0]['password']
+                @login = db_result[0]['login']
+
+                return db_email == email && db_password == password
+            else
+                return
+            end
         end
     end
 end

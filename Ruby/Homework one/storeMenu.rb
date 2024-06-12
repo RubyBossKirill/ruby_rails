@@ -5,55 +5,72 @@ require_relative 'module/auth'
 
 puts "Приветствую. Авторизуйтесь или зарегистрируйтесь в нашем магазине."
 loop do
-    puts "Выберите нужную цифру:\n1. Войти \n2. Зарегистрироваться\n3. Выйти"
-    choice = gets.chomp.to_i
-    case choice
-    when 1
-        raise "Данный функционал не настроен"
-    when 2
-        puts 'Рады будем видеть в наших рядах'
-        puts 'Введите email'
-        count = 0
-        email = gets.chomp
-        while count < 3 do
-            if Authentication::UserAuth.valid_email?(email) == true
-                break
-            else
-                count += 1
-                p "Попробуйте еще раз ввести email"
-                email = gets.chomp
+    loop do
+        puts "Выберите нужную цифру:\n1. Войти \n2. Зарегистрироваться\n3. Выйти"
+        choice = gets.chomp.to_i
+        case choice
+        when 1
+            loop do
+                puts "Введите Email"
+                user_email = gets.chomp
+
+                puts "Введите пароль"
+                user_password = gets.chomp
+
+                user_sing_up = Authentication::UserAuth.new(user_email, user_password)
+                if user_sing_up.user_auth == true
+                    break puts "\nВход успешен, приветствую #{user_sing_up.login}\n" 
+                else
+                    puts "\nНеверный логин или пароль\n"
+                end
             end
-        end
-
-        if Authentication::UserAuth.valid_email?(email) == false
-            break p "Количество попыток исчерпано. Запустите программу заново"
-        end
-
-        puts "Придумайте логин"
-        login = gets.chomp.to_s
-
-        puts "Напишите пароль. Минимум 8 символов"
-        password = gets.chomp
-        count = 0
-        while count < 3 do
-            if Authentication::UserAuth.valid_password?(password) == true
-                break
-            else
-                count += 1
-                p "Придумайте другой пароль. Посложнее. Минимум 8 символов"
-                password = gets.chomp
+            break
+        when 2
+            puts 'Рады будем видеть в наших рядах'
+            puts 'Введите email'
+            count = 0
+            email = gets.chomp
+            while count < 3 do
+                if Authentication::UserAuth.valid_email?(email) == true
+                    break
+                else
+                    count += 1
+                    p "Попробуйте еще раз ввести email"
+                    email = gets.chomp
+                end
             end
-        end
-        
-        user = Authentication::UserAuth.new(email, login, password).registered
 
-        puts "Поздравляю с регистрацией."
-    when 3
-        break puts "До свидания!"
-    else
-        puts "Введите нужную цирфу"
+            if Authentication::UserAuth.valid_email?(email) == false
+                break p "Количество попыток исчерпано. Запустите программу заново"
+            end
+
+            puts "Придумайте логин"
+            login = gets.chomp.to_s
+
+            puts "Напишите пароль. Минимум 8 символов"
+            password = gets.chomp
+            count = 0
+            while count < 3 do
+                if Authentication::UserAuth.valid_password?(password) == true
+                    break
+                else
+                    count += 1
+                    p "Придумайте другой пароль. Посложнее. Минимум 8 символов"
+                    password = gets.chomp
+                end
+            end
+            
+            user = Authentication::UserAuth.new(email, login, password).registered
+
+            puts "Поздравляю с регистрацией."
+        when 3
+            break puts "До свидания!"
+        else
+            puts "Введите нужную цирфу"
+        end
     end
-    puts "Добро пожаловать в магазин дисков!"
+
+    puts "\nДобро пожаловать в магазин дисков!"
 
     loop do
         puts "\nВыберите действие:\n1. Просмотр товаров\n2. Добавить товар в корзину\n3. Просмотреть корзину\n4. Получить итоговую сумму заказа\n5. Административные функции\n6. Выйти\n\nВведите номер действия:"
@@ -115,10 +132,10 @@ loop do
                 end
             end
         when 6
-            "До свидания!"
-            break
+            break puts "До свидания!"
         else
             "Введите нужный номер"
         end
     end
+    break
 end
