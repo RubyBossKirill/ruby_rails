@@ -21,6 +21,7 @@ class Admin < Store
             "quantity" => quantity
         }
         save_items_to_json(@admin_item)
+        save_to_db(@admin_item)
     end
 
 end
