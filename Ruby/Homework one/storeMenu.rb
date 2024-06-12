@@ -2,8 +2,7 @@ require_relative 'module/Store'
 require_relative 'module/Customer'
 require_relative 'module/Admin'
 
-$store = Store.new()
-$basket = Customer.new()
+
     puts "Добро пожаловать в магазин дисков!"
 loop do
     puts "\nВыберите действие:\n1. Просмотр товаров\n2. Добавить товар в корзину\n3. Просмотреть корзину\n4. Получить итоговую сумму заказа\n5. Административные функции\n6. Выйти\n\nВведите номер действия:"

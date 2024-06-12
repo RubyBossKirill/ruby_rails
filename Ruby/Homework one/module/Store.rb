@@ -1,14 +1,13 @@
-require 'json'
 require 'sqlite3'
 
 class Store
-    JSON_DATA = 'database/books.json'
+
     VARIABLE_HASH = 'items'
     @@DATABASE = 'database/store_products.sqlite'
     attr_accessor :books
 
     def initialize
-        @books = load_items_from_json
+        @books[VARIABLE_HASH] = load_from_db
     end
 
     def display_items
@@ -20,22 +19,6 @@ class Store
     end
 
     protected
-
-    # ВЫРЕЗАТЬ НАХРЕН 
-    
-    def load_items_from_json
-        file = File.read(JSON_DATA)
-        data_books = JSON.parse(file)
-    end
-
-    def save_items_to_json(data)
-        @books[VARIABLE_HASH] << data
-        File.open(JSON_DATA, 'w') do |file|
-            file.write(@books.to_json) 
-        end
-    end
-
-     # ВЫРЕЗАТЬ НАХРЕН 
     
     def load_from_db
         db = SQLite3::Database.open(@@DATABASE)
@@ -74,6 +57,3 @@ class Store
         db.close
     end
 end
-start = Store.new()
-start.load_from_db
-
