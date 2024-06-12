@@ -4,20 +4,27 @@ require_relative 'module/Admin'
 require_relative 'module/auth'
 
 puts "Приветствую. Авторизуйтесь или зарегистрируйтесь в нашем магазине."
+# общий луп, со всем меню
 loop do
+    # луп по авторизации. В данном лупе клиент выбирает войти или зарегаться, 
+    # или вовсе выйти
     loop do
         puts "Выберите нужную цифру:\n1. Войти \n2. Зарегистрироваться\n3. Выйти"
         choice = gets.chomp.to_i
         case choice
         when 1
+            # тут луп для того, чтобы клиент ввел мэло и пароль
             loop do
                 puts "Введите Email"
                 user_email = gets.chomp
 
                 puts "Введите пароль"
                 user_password = gets.chomp
-
+                # после ввода логина и пароля, мы создаем экземпляр класса,
+                # в котором передаем то что он ввел и проверяем есть такой клиент или нет
                 user_sing_up = Authentication::UserAuth.new(user_email, user_password)
+                # если клиент имеется, то вход успешный и двигаемся дальше. Если нет, то 
+                # предлагаем заново ввести логин и пароль
                 if user_sing_up.user_auth == true
                     break puts "\nВход успешен, приветствую #{user_sing_up.login}\n" 
                 else
@@ -25,12 +32,17 @@ loop do
                 end
             end
             break
+        # если клиент выбрал зарегистрироваться
         when 2
             puts 'Рады будем видеть в наших рядах'
             puts 'Введите email'
             count = 0
             email = gets.chomp
+            # тут мы запрашиваем емаил, после чего проверяем его валидность
+            # если он ен валиден, то мы говорим ему еще раз ввести его
+            # дается 3 попытки. После чего программа выкинет его
             while count < 3 do
+                # тут мы обращаемся к селф методу в auth.rb
                 if Authentication::UserAuth.valid_email?(email) == true
                     break
                 else
@@ -39,18 +51,22 @@ loop do
                     email = gets.chomp
                 end
             end
-
+            # здесь, если человек после 3 попыток не получилось пройти валидацию
+            # то мы пишем что попыток исчерпано и выкидываем из программы
             if Authentication::UserAuth.valid_email?(email) == false
                 break p "Количество попыток исчерпано. Запустите программу заново"
             end
 
+            # дальше идем к логину. Запрашиваем логин, без валидации. Просто логин
             puts "Придумайте логин"
             login = gets.chomp.to_s
 
+            # дальше мы запрашиваем пароль и отправляем на валидацию. Так же как и мыло
             puts "Напишите пароль. Минимум 8 символов"
             password = gets.chomp
             count = 0
             while count < 3 do
+                #  # тут мы обращаемся к селф методу в auth.rb
                 if Authentication::UserAuth.valid_password?(password) == true
                     break
                 else
@@ -60,9 +76,18 @@ loop do
                 end
             end
             
-            user = Authentication::UserAuth.new(email, login, password).registered
+            # здесь, если человек после 3 попыток не получилось пройти валидацию
+            # то мы пишем что попыток исчерпано и выкидываем из программы
+            if Authentication::UserAuth.valid_password?(password) == false
+                break p "Количество попыток исчерпано. Запустите программу заново"
+            end
+            # тут мы проводим регистрацию с записью в БД
+            user = Authentication::UserAuth.new(email, login, password)
+            user.registered
 
             puts "Поздравляю с регистрацией."
+            $store = Store.new()
+            $basket = Customer.new()
         when 3
             break puts "До свидания!"
         else
@@ -71,17 +96,15 @@ loop do
     end
 
     puts "\nДобро пожаловать в магазин дисков!"
-
+    # тут все что связано с меню уже
     loop do
         puts "\nВыберите действие:\n1. Просмотр товаров\n2. Добавить товар в корзину\n3. Просмотреть корзину\n4. Получить итоговую сумму заказа\n5. Административные функции\n6. Выйти\n\nВведите номер действия:"
 
         user_choice = gets.chomp.to_i   
         case user_choice
-        when 1
-            $store = Store.new()
+        when 1 # просмотр товаров
             $store.display_items
-            $basket = Customer.new()
-        when 2
+        when 2 # Добавить товар в корзину
             $store.display_items
             puts "Введите нужную цифру для добавления товара в корзину"
             count = 0
@@ -98,13 +121,13 @@ loop do
                 count += 1
             end
             user_basket = $basket.record_basket_user(mass)
-        when 3
+        when 3 # Просмотреть корзину
             final_basket = $basket.view_cart
             final_basket.map.with_index(1) { |item, index| puts "#{index}. #{item['type']} - #{item['title']} - #{item['price']}"}
-        when 4
+        when 4 # Получить итоговую сумму заказа
             summ = $basket.view_final_price
             puts "Итоговая сумма вашей корзины #{summ} рублей"
-        when 5
+        when 5 # Административные функции
             loop do
                 puts "Административные функции:\n1. Добавить новый товар\n2. Вернуться назад\nВведите номер действия:"
                 choice = gets.chomp.to_i
@@ -124,14 +147,13 @@ loop do
                     choice_quantity = gets.chomp.to_i
                     admin_basket = Admin.new()
                     admin_basket.add_item(choice_type, choice_title, choice_year, choice_director, choice_price, choice_quantity)
-                    
                 when 2
                     break
                 else
                     break
                 end
             end
-        when 6
+        when 6 # Выйти
             break puts "До свидания!"
         else
             "Введите нужный номер"

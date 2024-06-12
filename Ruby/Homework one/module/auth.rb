@@ -5,12 +5,12 @@ module Authentication
         @@USER_DATABASE = 'database/user_accounts.sqlite'
         @@NAME_USER_DATABASE = 'user_accounts'
         attr_accessor :login
-
+        # self метод для email
         def self.valid_email?(email)
             email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
             !!(email =~ email_regex)
         end
-
+        # self метод для password
         def self.valid_password?(password)
             password_regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/
             !!(password =~ password_regex)
