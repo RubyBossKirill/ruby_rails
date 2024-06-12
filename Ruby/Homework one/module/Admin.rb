@@ -22,5 +22,4 @@ class Admin < Store
         }
         save_to_db(@admin_item)
     end
-
 end

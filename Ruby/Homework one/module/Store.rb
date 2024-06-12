@@ -7,6 +7,7 @@ class Store
     attr_accessor :books
 
     def initialize
+        @books = {}
         @books[VARIABLE_HASH] = load_from_db
     end
 
@@ -25,8 +26,9 @@ class Store
         db.results_as_hash = true
 
         rows = db.execute "SELECT * FROM store_products"
-        
+
         db.close
+        return rows
     end
 
     def save_to_db(hash)

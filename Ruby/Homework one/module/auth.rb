@@ -4,7 +4,8 @@ module Authentication
     class UserAuth
         @@USER_DATABASE = 'database/user_accounts.sqlite'
         @@NAME_USER_DATABASE = 'user_accounts'
-        attr_accessor :login
+        attr_reader :login
+        attr_accessor :member
         # self метод для email
         def self.valid_email?(email)
             email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -78,6 +79,7 @@ module Authentication
                 db_email = db_result[0]['email']
                 db_password = db_result[0]['password']
                 @login = db_result[0]['login']
+                @member = db_result[0]['member']
 
                 return db_email == email && db_password == password
             else
