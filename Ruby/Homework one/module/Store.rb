@@ -1,9 +1,9 @@
 require 'sqlite3'
 
 class Store
-
     VARIABLE_HASH = 'items'
     @@DATABASE = 'database/store_products.sqlite'
+    @@DATABASE_NAME = 'store_products'
     attr_accessor :books
 
     def initialize
@@ -17,6 +17,17 @@ class Store
     
     def quantity_items
         @books[VARIABLE_HASH].size
+    end
+
+    def search_product(value)
+       list_type = @books[VARIABLE_HASH].map { |item| item[value] }.uniq
+       return list_type
+    end
+
+    def view_product(name, value)
+        result = search_for_name_db(name, value)
+        p result
+        return result
     end
 
     protected
@@ -57,5 +68,15 @@ class Store
         )
 
         db.close
+    end
+    
+    def search_for_name_db(name, type)
+        db = SQLite3::Database.open(@@DATABASE)
+        db.results_as_hash = true
+
+        db_result = db.execute("SELECT * FROM #{@@DATABASE_NAME } WHERE #{type} = ?", name)
+
+        db.close
+        return db_result
     end
 end

@@ -103,8 +103,8 @@ catch :exit_loops do
         # тут все что связано с меню уже
         loop do
             puts "\nВыберите действие:\n1. Просмотр товаров\n2. Добавить товар в корзину"
-            puts "3. Просмотреть корзину\n4. Получить итоговую сумму заказа\n5. Административные функции"
-            puts "6. Выйти\n\nВведите номер действия:"
+            puts "3. Просмотреть корзину\n4. Получить итоговую сумму заказа\n5. Поиск товара"
+            puts "6. Административные функции\n7. Выйти\n\nВведите номер действия:"
             user_choice = gets.chomp.to_i   
             case user_choice
             when 1 # просмотр товаров
@@ -132,7 +132,42 @@ catch :exit_loops do
             when 4 # Получить итоговую сумму заказа
                 summ = basket.view_final_price
                 puts "Итоговая сумма вашей корзины #{summ} рублей"
-            when 5 # Административные функции
+            when 5 # поиск товара
+                loop do
+                    puts "Выбери какой поиск хотите осуществить:"
+                    puts "1. Поиск товаров по имени\n2. Поиск товара по исполнителю"
+                    puts "3. Поиск товаров по типу\n4. Выйти в меню"
+                    user_choice = gets.chomp.to_i
+                    case user_choice
+                    when 1
+                        list_title = store.search_product('title')
+                        puts "Доступные имена:"
+                        list_title.each_with_index {|title, index| puts "#{index}. #{title}" }
+                        puts "Напишите нужное имя"
+                        user_choice_title = gets.chomp.to_s
+                        list_title = store.view_product(user_choice_title, 'title')
+                        if list_title == [] || list_title == nil
+                            puts "Попробуй другое имя. По такому имени не найден товар"
+                        else
+                            puts "Вот что нашлось:"
+                            list_title.each_with_index {|title, index| puts "#{title['type']} - #{title['title']} - #{title['year']} - #{title['director']} - #{title['price']} рублей." }
+                            puts "Это ваша книга?\n1. Да\n2. Нет"
+                            user_choice = gets.chomp.to_i
+                            if user_choice == 1
+                                puts "Добавили в вашу корзину"
+                                basket.record_basket(user_choice_title, 'title')
+                            elsif user_choice == 2
+                                return
+                            end
+                        end
+                    when 2
+                    when 3
+                    when 4
+                        break
+                    else
+                    end
+                end
+            when 6 # Административные функции
                 if user_sing_up.member == 'admin'
                     loop do
                         puts "Административные функции:\n1. Добавить новый товар\n2. Вернуться назад\nВведите номер действия:"
@@ -183,7 +218,7 @@ catch :exit_loops do
                 else
                     puts 'Вы не администратор!'
                 end
-            when 6 # Выйти
+            when 7 # Выйти
                 puts "До свидания!"
                 throw :exit_loops
             else
