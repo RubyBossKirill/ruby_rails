@@ -117,7 +117,7 @@ catch :exit_loops do
                 mass = []
                 while count <= quantity
                     items_choice = gets.chomp.to_i
-                    mass << items_choice
+                    mass << store.view_product(items_choice - 1, 'id')[0]
                     puts "\nДобавить еще? 1 - Да. 0 - Нет"
                     choice = gets.chomp.to_i
                     if choice == 0
@@ -138,33 +138,33 @@ catch :exit_loops do
                     puts "1. Поиск товаров по имени\n2. Поиск товара по исполнителю"
                     puts "3. Поиск товаров по типу\n4. Выйти в меню"
                     user_choice = gets.chomp.to_i
-                    case user_choice
-                    when 1
-                        list_title = store.search_product('title')
-                        puts "Доступные имена:"
-                        list_title.each_with_index {|title, index| puts "#{index}. #{title}" }
-                        puts "Напишите нужное имя"
-                        user_choice_title = gets.chomp.to_s
-                        list_title = store.view_product(user_choice_title, 'title')
-                        if list_title == [] || list_title == nil
-                            puts "Попробуй другое имя. По такому имени не найден товар"
-                        else
-                            puts "Вот что нашлось:"
-                            list_title.each_with_index {|title, index| puts "#{title['type']} - #{title['title']} - #{title['year']} - #{title['director']} - #{title['price']} рублей." }
-                            puts "Это ваша книга?\n1. Да\n2. Нет"
-                            user_choice = gets.chomp.to_i
-                            if user_choice == 1
-                                puts "Добавили в вашу корзину"
-                                basket.record_basket(user_choice_title, 'title')
-                            elsif user_choice == 2
-                                return
-                            end
-                        end
-                    when 2
-                    when 3
-                    when 4
-                        break
+                    value = nil
+                    if user_choice == 1
+                        value = "title"
+                    elsif user_choice == 2
+                        value = "director"
+                    elsif user_choice == 3
+                        value = "type"
                     else
+                        break
+                    end
+                    list = store.search_product("#{value}")
+                    puts "Доступные значения для поиска:"
+                    list.each_with_index {|title, index| puts "#{index}. #{title}" }
+                    puts "Напишите нужное значение"
+                    user_choice_value = gets.chomp.to_s
+                    list = store.view_product(user_choice_value, "#{value}")
+                    if list == [] || list == nil
+                        puts "Попробуй другое значение. По такому имени не найден ничего"
+                    else
+                        puts "Вот что нашлось:"
+                        list.each_with_index {|title, index| puts "#{title['type']} - #{title['title']} - #{title['year']} - #{title['director']} - #{title['price']} рублей." }
+                        puts "Это ваша книга?\n1. Да\n2. Нет"
+                        user_choice = gets.chomp.to_i
+                        if user_choice == 1
+                            puts "Добавили в вашу корзину"
+                            basket.record_basket(user_choice_value, "#{value}")
+                        end
                     end
                 end
             when 6 # Административные функции

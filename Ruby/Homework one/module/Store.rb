@@ -26,7 +26,6 @@ class Store
 
     def view_product(name, value)
         result = search_for_name_db(name, value)
-        p result
         return result
     end
 
