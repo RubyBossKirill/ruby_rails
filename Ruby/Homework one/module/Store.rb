@@ -1,9 +1,8 @@
-require 'sqlite3'
+
 
 class Store
     VARIABLE_HASH = 'items'
-    @@DATABASE = 'database/store_products.sqlite'
-    @@DATABASE_NAME = 'store_products'
+    DB_NAME_STORE = 'store_products'
     attr_accessor :books
 
     def initialize
@@ -20,60 +19,35 @@ class Store
     end
 
     def search_product(value)
-       list_type = @books[VARIABLE_HASH].map { |item| item[value] }.uniq
-       return list_type
+       @books[VARIABLE_HASH].map { |item| item[value] }.uniq
     end
 
     def view_product(name, value)
-        result = search_for_name_db(name, value)
-        return result
+        search_for_name_db(name, value)
     end
 
     protected
     
     def load_from_db
-        db = SQLite3::Database.open(@@DATABASE)
-        db.results_as_hash = true
-
-        rows = db.execute "SELECT * FROM store_products"
-
-        db.close
-        return rows
+        db = Database.new
+        db.execute("SELECT * FROM #{DB_NAME_STORE}")
     end
 
     def save_to_db(hash)
-        db = SQLite3::Database.open(@@DATABASE)
-        db.results_as_hash = true
+        db = Database.new
 
-        db.execute <<-SQL
-            CREATE TABLE IF NOT EXISTS store_products (
-                id INTEGER PRIMARY KEY,
-                type TEXT,
-                title TEXT,
-                year INTEGER,
-                director TEXT,
-                price INTEGER,
-                quantity INTEGER
-            );
-        SQL
-
-        db.execute(
-            "INSERT INTO store_products (" +
-                hash.keys.join(',') + ")" +
-                "VALUES (" +
-                ('?,'*hash.keys.size).chomp(',') +
-                ")",
-                hash.values
-        )
-
-        db.close
+        columns = hash.keys.join(',')
+        placeholders = ('?,' * hash.keys.size).chomp(',')
+        query = "INSERT INTO #{DB_NAME_STORE} (#{columns}) VALUES (#{placeholders})"
+        
+        db.execute(query, hash.values)
     end
     
     def search_for_name_db(name, type)
         db = SQLite3::Database.open(@@DATABASE)
         db.results_as_hash = true
 
-        db_result = db.execute("SELECT * FROM #{@@DATABASE_NAME } WHERE #{type} = ?", name)
+        db_result = db.execute("SELECT * FROM #{@@DATABASE_NAME} WHERE #{type} = ?", name)
 
         db.close
         return db_result

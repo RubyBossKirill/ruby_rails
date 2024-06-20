@@ -2,6 +2,7 @@ require_relative 'module/Store'
 require_relative 'module/Customer'
 require_relative 'module/Admin'
 require_relative 'module/auth'
+require_relative 'module/Database'
 
 puts "Приветствую. Авторизуйтесь или зарегистрируйтесь в нашем магазине."
 user_sing_up = nil
@@ -179,6 +180,7 @@ catch :exit_loops do
                             puts "Введите название товара:"
                             choice_title = gets.chomp.to_s
                             puts "Введите год выпуска:"
+                            choice_year = nil
                             loop do
                                 choice_year = gets.chomp.to_i
                                 if choice_year.is_a?(Integer) && choice_year != 0
@@ -190,6 +192,7 @@ catch :exit_loops do
                             puts "Кто создатель товара?"
                             choice_director = gets.chomp.to_s
                             puts "Какая цена за товар"
+                            choice_price = nil
                             loop do
                                 choice_price = gets.chomp.to_i
                                 if choice_price.is_a?(Integer) && choice_price != 0
@@ -199,6 +202,7 @@ catch :exit_loops do
                                 end
                             end
                             puts "Количество данного товара"
+                            choice_quantity = nil
                             loop do
                                 choice_quantity = gets.chomp.to_i
                                 if choice_quantity.is_a?(Integer) && choice_quantity != 0
