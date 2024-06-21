@@ -6,6 +6,7 @@ class Store
     attr_accessor :books
 
     def initialize
+        @db = Database.new
         @books = {}
         @books[VARIABLE_HASH] = load_from_db
     end
@@ -23,33 +24,20 @@ class Store
     end
 
     def view_product(name, value)
-        search_for_name_db(name, value)
+        search_name_in_db(name, value)
     end
 
     protected
     
     def load_from_db
-        db = Database.new
-        db.execute("SELECT * FROM #{DB_NAME_STORE}")
+        @db.execute("SELECT * FROM #{DB_NAME_STORE}")
     end
 
     def save_to_db(hash)
-        db = Database.new
-
-        columns = hash.keys.join(',')
-        placeholders = ('?,' * hash.keys.size).chomp(',')
-        query = "INSERT INTO #{DB_NAME_STORE} (#{columns}) VALUES (#{placeholders})"
-        
-        db.execute(query, hash.values)
+        @db.store_insert_into(hash)
     end
     
-    def search_for_name_db(name, type)
-        db = SQLite3::Database.open(@@DATABASE)
-        db.results_as_hash = true
-
-        db_result = db.execute("SELECT * FROM #{@@DATABASE_NAME} WHERE #{type} = ?", name)
-
-        db.close
-        return db_result
+    def search_name_in_db(name, type)
+        @db.store_search_position(name, type)
     end
 end
