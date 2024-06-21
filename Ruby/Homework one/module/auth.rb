@@ -2,8 +2,7 @@ require 'sqlite3'
 
 module Authentication
     class UserAuth
-        @@USER_DATABASE = 'database/user_accounts.sqlite'
-        @@NAME_USER_DATABASE = 'user_accounts'
+        NAME_USER_DATABASE = 'user_accounts'
         attr_reader :login
         attr_accessor :member
         # self метод для email
@@ -23,6 +22,7 @@ module Authentication
             @password = password
             @creat_at = Time.now.strftime("%Y-%m-%d %H:%M:%S")
             @member = member
+            @db = Database.new(NAME_USER_DATABASE)
         end
         def registered
             hash = {
@@ -36,45 +36,17 @@ module Authentication
         end
 
         def user_auth
-            result = search_auth_user(@email, @password)
+            search_auth_user(@email, @password)
         end
 
         private
 
         def save_to_db(hash)
-            db = SQLite3::Database.open(@@USER_DATABASE)
-            db.results_as_hash = true
-
-            db.execute <<-SQL
-                CREATE TABLE IF NOT EXISTS #{@@NAME_USER_DATABASE} (
-                    id INTEGER PRIMARY KEY,
-                    email TEXT,
-                    login TEXT,
-                    password TEXT,
-                    creat_at DATETIME,
-                    member TEXT
-                );
-            SQL
-
-            db.execute(
-                "INSERT INTO #{@@NAME_USER_DATABASE} (" +
-                    hash.keys.join(',') + ")" +
-                    "VALUES (" +
-                    ('?,'*hash.keys.size).chomp(',') +
-                    ")",
-                    hash.values
-            )
-
-            db.close
+            @db.insert_into(hash)
         end
 
         def search_auth_user(email, password)
-            db = SQLite3::Database.open(@@USER_DATABASE)
-            db.results_as_hash = true
-
-            db_result = db.execute("SELECT * FROM #{@@NAME_USER_DATABASE} WHERE email = ?", email)
-
-            db.close
+            db_result = @db.search_position(email, 'email')
             if !db_result.empty?
                 db_email = db_result[0]['email']
                 db_password = db_result[0]['password']

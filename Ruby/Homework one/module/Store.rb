@@ -6,7 +6,7 @@ class Store
     attr_accessor :books
 
     def initialize
-        @db = Database.new
+        @db = Database.new(DB_NAME_STORE)
         @books = {}
         @books[VARIABLE_HASH] = load_from_db
     end
@@ -34,10 +34,10 @@ class Store
     end
 
     def save_to_db(hash)
-        @db.store_insert_into(hash)
+        @db.insert_into(hash)
     end
     
     def search_name_in_db(name, type)
-        @db.store_search_position(name, type)
+        @db.search_position(name, type)
     end
 end
