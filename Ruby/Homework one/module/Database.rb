@@ -1,4 +1,6 @@
 require 'sqlite3'
+
+# прописать метод закрытия ДАТАБАЗЫ
 class Database
     
     def initialize(file)
